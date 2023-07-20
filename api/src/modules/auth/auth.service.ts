@@ -1,49 +1,56 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersRepository } from 'src/shared/database/repositories/users.repositories';
-import { compare, hash } from 'bcryptjs';
-import { JwtService } from '@nestjs/jwt';
-import { SignupDto } from './dto/signup.dto';
-import { SignineDto } from './dto/signin.dto';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
+import { UsersRepository } from 'src/shared/database/repositories/users.repositories'
+import { compare, hash } from 'bcryptjs'
+import { JwtService } from '@nestjs/jwt'
+import { SignupDto } from './dto/signup.dto'
+import { SignineDto } from './dto/signin.dto'
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersRepo: UsersRepository, private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly usersRepo: UsersRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async signin(signinDto: SignineDto) {
     const { email, password } = signinDto
-    
+
     const user = await this.usersRepo.findUnique({
-      where: { email }
+      where: { email },
     })
 
     if (!user) {
-      throw new UnauthorizedException("Invalid credentials")
+      throw new UnauthorizedException('Invalid credentials')
     }
 
     const isPasswordValid = await compare(password, user.password)
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException("Invalid credentials")
+      throw new UnauthorizedException('Invalid credentials')
     }
 
-    const acessToken =  await this.generateAcessToken(user.id)
+    const acessToken = await this.generateAcessToken(user.id)
 
     return { acessToken }
   }
 
   async signup(signupDto: SignupDto) {
-    const { name, email, password } = signupDto;
+    const { name, email, password } = signupDto
 
     const emailTaken = await this.usersRepo.findUnique({
       where: { email },
       select: { id: true },
-    });
+    })
 
     if (emailTaken) {
-      throw new ConflictException('This email is already in use');
+      throw new ConflictException('This email is already in use')
     }
 
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await hash(password, 12)
 
     const user = await this.usersRepo.create({
       data: {
@@ -71,9 +78,9 @@ export class AuthService {
           },
         },
       },
-    });
+    })
 
-    const acessToken =  await this.generateAcessToken(user.id)
+    const acessToken = await this.generateAcessToken(user.id)
 
     return { acessToken }
   }
