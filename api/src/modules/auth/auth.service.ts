@@ -3,11 +3,11 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
-import { UsersRepository } from 'src/shared/database/repositories/users.repositories'
+import { UsersRepository } from 'src/shared/database/repositories/users.repository'
 import { compare, hash } from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt'
-import { SignupDto } from './dto/signup.dto'
-import { SigninDto } from './dto/signin.dto'
+import { SigninDto } from './dto/signin'
+import { SignupDto } from './dto/signup'
 
 @Injectable()
 export class AuthService {
@@ -24,13 +24,13 @@ export class AuthService {
     })
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials')
+      throw new UnauthorizedException('Invalid credentials.')
     }
 
     const isPasswordValid = await compare(password, user.password)
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials')
+      throw new UnauthorizedException('Invalid credentials.')
     }
 
     const accessToken = await this.generateAccessToken(user.id)
@@ -47,7 +47,7 @@ export class AuthService {
     })
 
     if (emailTaken) {
-      throw new ConflictException('This email is already in use')
+      throw new ConflictException('This email is already in use.')
     }
 
     const hashedPassword = await hash(password, 12)

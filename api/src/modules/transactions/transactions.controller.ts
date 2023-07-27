@@ -12,9 +12,9 @@ import {
   Query,
   ParseIntPipe,
 } from '@nestjs/common'
+import { ActiveUserId } from 'src/shared/decorators/ActiveUserId'
 import { CreateTransactionDto } from './dto/create-transaction.dto'
 import { UpdateTransactionDto } from './dto/update-transaction.dto'
-import { ActiveUserId } from 'src/shared/decorators/ActiveUserId'
 import { TransactionsService } from './services/transactions.service'
 import { OptionalParseUUIDPipe } from 'src/shared/pipes/OptionalParseUUIDPipe'
 import { TransactionType } from './entities/Transaction'

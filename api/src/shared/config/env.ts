@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer'
-import { IsNotEmpty, IsString, validateSync } from 'class-validator'
+import { IsNotEmpty, IsString, NotEquals, validateSync } from 'class-validator'
 
 class Env {
   @IsString()
@@ -8,12 +8,13 @@ class Env {
 
   @IsString()
   @IsNotEmpty()
+  @NotEquals('unsecure_jwt_secret')
   jwtSecret: string
 }
 
 export const env: Env = plainToInstance(Env, {
-  jwtSecret: process.env.JWT_SECRET,
   dbURL: process.env.DATABASE_URL,
+  jwtSecret: process.env.JWT_SECRET,
 })
 
 const errors = validateSync(env)
